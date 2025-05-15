@@ -202,14 +202,39 @@ export default function Home() {
     yPos = doc.lastAutoTable.finalY + 10;
 
     doc.setFont('helvetica');
-    doc.setFontSize(12);
-    doc.text('Description:', 14, yPos);
-    yPos += 6;
+    doc.setFontSize(10);
+    doc.setLineHeightFactor(0.85);
+
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const leftMargin = 14;
+    const topPageMargin = 20;
+    const bottomPageMargin = 20;
+    const availableWidth = doc.internal.pageSize.getWidth() - leftMargin * 2;
+    const lineHeight = doc.getLineHeight();
+
+    if (yPos + lineHeight > pageHeight - bottomPageMargin) {
+      //If the text is too long, add a new page
+      doc.addPage();
+      yPos = topPageMargin;
+    }
+    doc.setFont('helvetica', 'bold');
+    doc.text('Description:', leftMargin, yPos);
+    doc.setFont('helvetica', 'normal');
+    yPos += lineHeight;
+
     const splitDescription = doc.splitTextToSize(
       listingData.listingDescription,
-      doc.internal.pageSize.getWidth() - 28
+      availableWidth
     );
-    doc.text(splitDescription, 14, yPos);
+
+    for (const line of splitDescription) {
+      if (yPos > pageHeight - bottomPageMargin) {
+        doc.addPage();
+        yPos = topPageMargin;
+      }
+      doc.text(line, leftMargin, yPos);
+      yPos += lineHeight;
+    }
 
     doc.save(`listing-${listingData.id}.pdf`);
   };
