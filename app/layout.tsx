@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Garage: Invoice Generator',
-  description: 'Generate PDF summaries for Garage listings quickly and easily by providing the listing URL.',
+  description:
+    'Generate PDF summaries for Garage listings quickly and easily by providing the listing URL.',
 };
 
 export default function RootLayout({
