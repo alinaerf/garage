@@ -4,7 +4,7 @@ import { LoadingSpinner } from './components/spinner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ListingDetailsCard from './components/ListingDetailsCard';
-import { Listing, ApiResponse, jsPDFWithAutoTable, ApiError } from './types'; 
+import { Listing, ApiResponse, jsPDFWithAutoTable, ApiError } from './types';
 import { formatCurrency } from './utils/currency';
 
 export default function Home() {
@@ -94,7 +94,7 @@ export default function Home() {
   const handleDownloadPdf = async () => {
     if (!listingData) return;
 
-    const doc = new jsPDF() as jsPDFWithAutoTable; 
+    const doc = new jsPDF() as jsPDFWithAutoTable;
     let yPos = 22;
 
     doc.setFontSize(18);
@@ -184,17 +184,17 @@ export default function Home() {
       head: [tableColumn],
       body: tableRows,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: [0, 51, 102],
         textColor: [255, 255, 255],
         fontStyle: 'bold',
       },
-      styles: { 
+      styles: {
         font: 'helvetica',
-        cellPadding: 3, 
+        cellPadding: 3,
       },
-      alternateRowStyles: { 
-        fillColor: [245, 245, 245]
+      alternateRowStyles: {
+        fillColor: [245, 245, 245],
       },
       margin: { top: 10 },
     });
