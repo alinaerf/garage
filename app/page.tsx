@@ -4,12 +4,8 @@ import { LoadingSpinner } from './components/spinner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import ListingDetailsCard from './components/ListingDetailsCard';
-import { Listing, ApiResponse, jsPDFWithAutoTable } from './types'; // Import types
-
-// Interface for expected API error responses
-interface ApiError {
-  message?: string;
-}
+import { Listing, ApiResponse, jsPDFWithAutoTable, ApiError } from './types'; 
+import { formatCurrency } from './utils/currency';
 
 export default function Home() {
   const [url, setUrl] = useState('');
@@ -23,7 +19,7 @@ export default function Home() {
     const match = input.match(regex);
 
     if (!match) {
-      setError('Please enter a valid WithGarage listing URL.');
+      setError('Please enter a valid Garage listing URL.');
       return null;
     }
 
@@ -72,7 +68,7 @@ export default function Home() {
       }
 
       const apiResponse = resultJson as ApiResponse;
-      // Check for business-level error first if response.ok
+
       if (apiResponse?.error) {
         setError(apiResponse.error);
         setListingData(null);
@@ -98,7 +94,7 @@ export default function Home() {
   const handleDownloadPdf = async () => {
     if (!listingData) return;
 
-    const doc = new jsPDF() as jsPDFWithAutoTable; // Assert the extended type here
+    const doc = new jsPDF() as jsPDFWithAutoTable; 
     let yPos = 22;
 
     doc.setFontSize(18);
@@ -121,7 +117,6 @@ export default function Home() {
         const imageObjectURL = URL.createObjectURL(imageBlob);
 
         const img = new Image();
-        // No need for crossOrigin here as it's from our own domain via proxy
         img.src = imageObjectURL;
 
         await new Promise<void>((resolve, reject) => {
@@ -135,6 +130,7 @@ export default function Home() {
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
+
             // Determine image type from blob, default to jpeg
             const imageType =
               imageBlob.type.split('/')[1]?.toUpperCase() || 'JPEG';
@@ -159,12 +155,12 @@ export default function Home() {
           };
         });
       } catch (e) {
-        console.error('Could not add image to PDF via proxy:', e);
         // Continue without image if there's an error
+        console.error('Could not add image to PDF via proxy:', e);
       }
     }
 
-    const tableColumn = ['Field', 'Value'];
+    const tableColumn = ['Item', 'Details'];
     const tableRows: (string | number)[][] = [];
 
     tableRows.push(['Brand', listingData.itemBrand]);
@@ -187,13 +183,25 @@ export default function Home() {
       startY: yPos,
       head: [tableColumn],
       body: tableRows,
-      theme: 'grid',
-      headStyles: { fillColor: [22, 160, 133] }, // Example: teal header
+      theme: 'striped',
+      headStyles: { 
+        fillColor: [0, 51, 102],
+        textColor: [255, 255, 255],
+        fontStyle: 'bold',
+      },
+      styles: { 
+        font: 'helvetica',
+        cellPadding: 3, 
+      },
+      alternateRowStyles: { 
+        fillColor: [245, 245, 245]
+      },
       margin: { top: 10 },
     });
 
-    yPos = doc.lastAutoTable.finalY + 10; // Now type-safe due to jsPDFWithAutoTable assertion
+    yPos = doc.lastAutoTable.finalY + 10;
 
+    doc.setFont('helvetica');
     doc.setFontSize(12);
     doc.text('Description:', 14, yPos);
     yPos += 6;
@@ -204,14 +212,6 @@ export default function Home() {
     doc.text(splitDescription, 14, yPos);
 
     doc.save(`listing-${listingData.id}.pdf`);
-  };
-
-  // Helper to format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
   };
 
   return (

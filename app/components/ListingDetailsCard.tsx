@@ -3,13 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { ListingDetailsCardProps } from '../types';
-
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
-};
+import { formatCurrency } from '../utils/currency';
 
 const ListingDetailsCard: React.FC<ListingDetailsCardProps> = ({
   listingData,
