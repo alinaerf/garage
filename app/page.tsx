@@ -223,7 +223,7 @@ export default function Home() {
             Invoice Generator
           </h1>
           <p className="text-sm text-muted-foreground">
-            Enter your WithGarage listing URL below to generate an invoice
+            Enter your Garage listing URL below to generate an invoice
           </p>
         </div>
 
